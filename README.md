@@ -16,3 +16,9 @@ We care less about a polished final result than about how you think:
 - What do you prioritize when you can't fix everything?
 - How do you communicate trade-offs?
 - How do you decide when something is "good enough"?
+
+## Exercises
+
+| # | Title | Language | Focus |
+|---|-------|----------|-------|
+| 01 | [Book Inventory CLI](./exercises/01-book-inventory/) | Python | Code review & refactoring |
