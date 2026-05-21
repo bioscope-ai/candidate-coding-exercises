@@ -21,4 +21,4 @@ We care less about a polished final result than about how you think:
 
 | # | Title | Language | Focus |
 |---|-------|----------|-------|
-| 01 | [Book Inventory CLI](./exercises/01-book-inventory/) | Python | Code review & refactoring |
+| 01 | [Build an SDK, Then Use It](./exercises/01-sample-tracker/) | Python | AI tooling, SDK design, integration refactor |
