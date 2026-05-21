@@ -1,0 +1,2281 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "test-ordering-service",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/test-orders/wgs/patients/{patient_id}/orders": {
+      "get": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "List WGS orders for a patient",
+        "description": "List WGS orders for a patient, including their associated kits.",
+        "operationId": "list_wgs_orders_for_patient",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_GxGWgsOrderWithKits_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/wgs/patients/{patient_id}/kits": {
+      "get": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "List WGS kits for a patient",
+        "description": "List WGS kits for a patient.",
+        "operationId": "list_wgs_kits_for_patient",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_GxGWgsKit_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "Link a WGS kit to a patient",
+        "description": "Link an existing kit to a patient.\n\nThe kit must belong to the account and not already be assigned to a patient.\nUse this endpoint when a clinic has bulk-ordered kits and needs to assign\none to a patient.",
+        "operationId": "link_wgs_kit",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "Bioscope-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-User-Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkKitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/wgs/orders": {
+      "get": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "List WGS orders for an account",
+        "description": "List WGS orders for the account.",
+        "operationId": "list_wgs_orders",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_GxGWgsOrder_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/wgs/orders/{gxg_wgs_order_id}/kits": {
+      "get": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "List kits for a WGS order",
+        "description": "List kits for a specific order.",
+        "operationId": "list_wgs_kits_for_order",
+        "parameters": [
+          {
+            "name": "gxg_wgs_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Gxg Wgs Order Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_GxGWgsKit_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/wgs/kits/{gxg_wgs_kit_id}": {
+      "get": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "Get a WGS kit by ID",
+        "description": "Get a specific kit by its internal ID.",
+        "operationId": "get_wgs_kit",
+        "parameters": [
+          {
+            "name": "gxg_wgs_kit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Gxg Wgs Kit Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GxGWgsKit"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/wgs/kits": {
+      "get": {
+        "tags": [
+          "wgs-orders"
+        ],
+        "summary": "List WGS kits for an account",
+        "description": "List kits for the account.\n\nIf gxgKitId query parameter is provided, returns the kit matching that\nexternal GxG kit ID (for validation purposes). Otherwise returns all kits\nfor the account.",
+        "operationId": "list_wgs_kits",
+        "parameters": [
+          {
+            "name": "gxgKitId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gxgkitid"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_GxGWgsKit_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/patients/{patient_id}/orders": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List MBx orders for a patient",
+        "description": "List MBX orders for a patient, including their associated samples.",
+        "operationId": "list_mbx_orders_for_patient",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxOrderWithSamples_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/orders": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List MBx orders for an account",
+        "description": "List MBX orders for the account.",
+        "operationId": "list_mbx_orders",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxOrder_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/orders/{cmbio_mbx_order_id}/samples": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List samples for an MBx order",
+        "description": "List samples for a specific order.",
+        "operationId": "list_mbx_samples_for_order",
+        "parameters": [
+          {
+            "name": "cmbio_mbx_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cmbio Mbx Order Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxSample_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/samples/{cmbio_mbx_sample_id}": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "Get an MBx sample by ID",
+        "description": "Get a specific sample by its internal ID.",
+        "operationId": "get_mbx_sample",
+        "parameters": [
+          {
+            "name": "cmbio_mbx_sample_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cmbio Mbx Sample Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CmbioMbxSample"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/samples": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List MBx samples for an account",
+        "description": "List samples for the account.\n\nIf barcode query parameter is provided, returns the sample matching that\nbarcode (for validation purposes). Otherwise returns all samples\nfor the account.",
+        "operationId": "list_mbx_samples",
+        "parameters": [
+          {
+            "name": "barcode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Barcode"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxSample_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/patients/{patient_id}/samples": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List MBx samples for a patient",
+        "description": "List MBX samples for a patient.",
+        "operationId": "list_mbx_samples_for_patient",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxSample_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "Assign an MBx sample to a patient",
+        "description": "Assign a sample to a patient.\n\nThe sample is identified by its barcode (visible on the physical kit).\nThis triggers the cmbio Person and Sample Metadata flow:\ncreates the cmbio Person if needed, sets metadata on the sample,\nand updates the internal database record.",
+        "operationId": "assign_mbx_sample",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "Bioscope-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-User-Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignSampleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/patients/{patient_id}/orders": {
+      "post": {
+        "tags": [
+          "enterprise-orders"
+        ],
+        "summary": "Create an enterprise test order for a patient",
+        "description": "Create a test order for an enterprise practice patient.\n\nCreates a patient entitlement and triggers consent. After the patient\naccepts consent, the test is ordered automatically via the existing\nevent-driven chain.",
+        "operationId": "create_enterprise_order",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "Bioscope-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-User-Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnterpriseOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/bulk-orders/wgs": {
+      "post": {
+        "tags": [
+          "enterprise-orders"
+        ],
+        "summary": "Create a bulk WGS order for an account",
+        "description": "Create a bulk to-clinic WGS order for an enterprise account.",
+        "operationId": "create_bulk_wgs_order",
+        "parameters": [
+          {
+            "name": "Bioscope-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-User-Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkWgsOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GxGWgsOrder"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/bulk-orders/mbx": {
+      "post": {
+        "tags": [
+          "enterprise-orders"
+        ],
+        "summary": "Create a bulk MBx order for an account",
+        "description": "Create a bulk to-clinic MBX order for an enterprise account.",
+        "operationId": "create_bulk_mbx_order",
+        "parameters": [
+          {
+            "name": "Bioscope-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-User-Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkMbxOrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CmbioMbxOrder"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssignSampleRequest": {
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "title": "Barcode"
+          },
+          "acceptedOutOfBandConsent": {
+            "type": "boolean",
+            "title": "Acceptedoutofbandconsent",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "barcode"
+        ],
+        "title": "AssignSampleRequest"
+      },
+      "BulkMbxOrderRequest": {
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quantity"
+        ],
+        "title": "BulkMbxOrderRequest"
+      },
+      "BulkWgsOrderRequest": {
+        "properties": {
+          "quantity": {
+            "type": "integer",
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Quantity"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quantity"
+        ],
+        "title": "BulkWgsOrderRequest"
+      },
+      "CmbioMbxOrder": {
+        "properties": {
+          "createdAt": {
+            "type": "integer",
+            "title": "Createdat",
+            "default": 0
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
+          "cmbioMbxOrderId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Cmbiombxorderid"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Accountid"
+          },
+          "patientId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patientid"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CmbioMbxOrderStatus"
+          },
+          "quantity": {
+            "type": "integer",
+            "title": "Quantity"
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "to-patient",
+              "to-clinic"
+            ],
+            "title": "Ordertype"
+          },
+          "recipientName": {
+            "type": "string",
+            "title": "Recipientname"
+          },
+          "addressLine1": {
+            "type": "string",
+            "title": "Addressline1"
+          },
+          "addressLine2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addressline2"
+          },
+          "city": {
+            "type": "string",
+            "title": "City"
+          },
+          "state": {
+            "type": "string",
+            "title": "State"
+          },
+          "zipCode": {
+            "type": "string",
+            "title": "Zipcode"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "Phonenumber"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "orderedByUserId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderedbyuserid"
+          },
+          "isTestEntity": {
+            "type": "boolean",
+            "title": "Istestentity",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "cmbioMbxOrderId",
+          "accountId",
+          "status",
+          "quantity",
+          "orderType",
+          "recipientName",
+          "addressLine1",
+          "city",
+          "state",
+          "zipCode",
+          "country",
+          "phoneNumber",
+          "email"
+        ],
+        "title": "CmbioMbxOrder"
+      },
+      "CmbioMbxOrderStatus": {
+        "type": "string",
+        "enum": [
+          "pending",
+          "placed",
+          "awaiting_shipment",
+          "shipped",
+          "on_hold",
+          "cancelled",
+          "failed"
+        ],
+        "title": "CmbioMbxOrderStatus"
+      },
+      "CmbioMbxOrderWithSamples": {
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/CmbioMbxOrder",
+            "description": "The order"
+          },
+          "samples": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxSample"
+            },
+            "type": "array",
+            "title": "Samples",
+            "description": "The samples associated with this order"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order",
+          "samples"
+        ],
+        "title": "CmbioMbxOrderWithSamples",
+        "description": "An order with its associated samples."
+      },
+      "CmbioMbxSample": {
+        "properties": {
+          "createdAt": {
+            "type": "integer",
+            "title": "Createdat",
+            "default": 0
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
+          "cmbioMbxSampleId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Cmbiombxsampleid"
+          },
+          "cmbioMbxOrderId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Cmbiombxorderid"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Accountid"
+          },
+          "patientId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patientid"
+          },
+          "barcode": {
+            "type": "string",
+            "title": "Barcode"
+          },
+          "labStatus": {
+            "$ref": "#/components/schemas/CmbioMbxSampleLabStatus"
+          },
+          "outboundCarrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outboundcarrier"
+          },
+          "outboundTrackingNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outboundtrackingnumber"
+          },
+          "inboundCarrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inboundcarrier"
+          },
+          "inboundTrackingNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inboundtrackingnumber"
+          },
+          "errorMessage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errormessage"
+          },
+          "collectionDate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collectiondate"
+          },
+          "isTestEntity": {
+            "type": "boolean",
+            "title": "Istestentity",
+            "default": false
+          },
+          "resultsEmailSentAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resultsemailsentat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cmbioMbxSampleId",
+          "cmbioMbxOrderId",
+          "accountId",
+          "barcode",
+          "labStatus"
+        ],
+        "title": "CmbioMbxSample"
+      },
+      "CmbioMbxSampleLabStatus": {
+        "type": "string",
+        "enum": [
+          "created",
+          "processing",
+          "cannot_process",
+          "sample_fail",
+          "on_hold",
+          "delay",
+          "cancel",
+          "resequencing",
+          "delivered"
+        ],
+        "title": "CmbioMbxSampleLabStatus"
+      },
+      "EnterpriseOrderRequest": {
+        "properties": {
+          "testType": {
+            "type": "string",
+            "enum": [
+              "wgs",
+              "mbx"
+            ],
+            "title": "Testtype"
+          },
+          "acceptedOutOfBandConsent": {
+            "type": "boolean",
+            "title": "Acceptedoutofbandconsent",
+            "default": false
+          },
+          "shippingAddress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShippingAddressOverride"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "testType"
+        ],
+        "title": "EnterpriseOrderRequest"
+      },
+      "GxGWgsKit": {
+        "properties": {
+          "createdAt": {
+            "type": "integer",
+            "title": "Createdat",
+            "default": 0
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
+          "gxgWgsKitId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Gxgwgskitid",
+            "description": "The ID of the Gene by Gene WGS kit (generated by us)"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Accountid",
+            "description": "The ID of the account that the kit belongs to"
+          },
+          "patientId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patientid",
+            "description": "The ID of the patient that the kit is for. May be None for `TO_CLINIC` orders"
+          },
+          "orderId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Orderid",
+            "description": "The Gene by Gene order ID"
+          },
+          "kitId": {
+            "type": "string",
+            "title": "Kitid",
+            "description": "The kit ID from Gene by Gene"
+          },
+          "status": {
+            "$ref": "#/components/schemas/GxGWgsKitStatus",
+            "description": "The status of the kit"
+          },
+          "carrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Carrier",
+            "description": "The carrier for the shipment"
+          },
+          "trackingNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trackingnumber",
+            "description": "The tracking number for the shipment"
+          },
+          "returnCarrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returncarrier",
+            "description": "The carrier for the return shipment"
+          },
+          "returnTrackingNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Returntrackingnumber",
+            "description": "The tracking number for the return shipment"
+          },
+          "errorMessage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Errormessage",
+            "description": "Error message if the order failed"
+          },
+          "resultsEmailSentAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resultsemailsentat"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gxgWgsKitId",
+          "accountId",
+          "orderId",
+          "kitId",
+          "status"
+        ],
+        "title": "GxGWgsKit"
+      },
+      "GxGWgsKitStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "SHIPPED",
+          "RECEIVED",
+          "COMPLETE",
+          "FAILED",
+          "DELAYED",
+          "CANCELLED"
+        ],
+        "title": "GxGWgsKitStatus"
+      },
+      "GxGWgsOrder": {
+        "properties": {
+          "createdAt": {
+            "type": "integer",
+            "title": "Createdat",
+            "default": 0
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
+          "gxgWgsOrderId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Gxgwgsorderid",
+            "description": "The ID of the Gene by Gene WGS order"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Accountid",
+            "description": "The ID of the account that the order belongs to"
+          },
+          "quantityOrdered": {
+            "type": "integer",
+            "title": "Quantityordered",
+            "description": "The quantity of kits ordered",
+            "default": 1
+          },
+          "patientId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patientid",
+            "description": "The ID of the patient that the order is for (will only be populated for `TO_PATIENT` orders)"
+          },
+          "orderId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderid",
+            "description": "The Gene by Gene order ID. None while the order is pending (i.e. the row has been written to our DB but the GxG create-order call has not yet succeeded). Populated once GxG accepts the order. Callers that dereference this must be scoped to paths where the order is known to be placed (e.g. GxG webhook handlers)."
+          },
+          "orderType": {
+            "type": "string",
+            "enum": [
+              "to-patient",
+              "to-clinic"
+            ],
+            "title": "Ordertype",
+            "description": "The type of order"
+          },
+          "recipientName": {
+            "type": "string",
+            "title": "Recipientname",
+            "description": "The name of the recipient of the order"
+          },
+          "addressLine1": {
+            "type": "string",
+            "title": "Addressline1",
+            "description": "The first line of the recipient's address"
+          },
+          "addressLine2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addressline2",
+            "description": "The second line of the recipient's address"
+          },
+          "city": {
+            "type": "string",
+            "title": "City",
+            "description": "The city of the recipient's address"
+          },
+          "state": {
+            "type": "string",
+            "title": "State",
+            "description": "The state of the recipient's address"
+          },
+          "zipCode": {
+            "type": "string",
+            "title": "Zipcode",
+            "description": "The ZIP code of the recipient's address"
+          },
+          "country": {
+            "type": "string",
+            "title": "Country",
+            "description": "The country of the recipient's address"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "title": "Phonenumber",
+            "description": "The phone number of the recipient"
+          },
+          "orderedByUserId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orderedbyuserid",
+            "description": "The ID of the user who initiated the order"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gxgWgsOrderId",
+          "accountId",
+          "orderType",
+          "recipientName",
+          "addressLine1",
+          "city",
+          "state",
+          "zipCode",
+          "country",
+          "phoneNumber"
+        ],
+        "title": "GxGWgsOrder"
+      },
+      "GxGWgsOrderWithKits": {
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/GxGWgsOrder",
+            "description": "The order"
+          },
+          "kits": {
+            "items": {
+              "$ref": "#/components/schemas/GxGWgsKit"
+            },
+            "type": "array",
+            "title": "Kits",
+            "description": "The kits associated with this order"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order",
+          "kits"
+        ],
+        "title": "GxGWgsOrderWithKits",
+        "description": "An order with its associated kits."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HttpPaginatedResponse_CmbioMbxOrderWithSamples_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxOrderWithSamples"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[CmbioMbxOrderWithSamples]"
+      },
+      "HttpPaginatedResponse_CmbioMbxOrder_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxOrder"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[CmbioMbxOrder]"
+      },
+      "HttpPaginatedResponse_CmbioMbxSample_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxSample"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[CmbioMbxSample]"
+      },
+      "HttpPaginatedResponse_GxGWgsKit_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GxGWgsKit"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[GxGWgsKit]"
+      },
+      "HttpPaginatedResponse_GxGWgsOrderWithKits_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GxGWgsOrderWithKits"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[GxGWgsOrderWithKits]"
+      },
+      "HttpPaginatedResponse_GxGWgsOrder_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/GxGWgsOrder"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[GxGWgsOrder]"
+      },
+      "HttpPaginationMetadata": {
+        "properties": {
+          "nextPageToken": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nextpagetoken"
+          }
+        },
+        "type": "object",
+        "title": "HttpPaginationMetadata"
+      },
+      "LinkKitRequest": {
+        "properties": {
+          "gxgKitId": {
+            "type": "string",
+            "title": "Gxgkitid"
+          },
+          "acceptedOutOfBandConsent": {
+            "type": "boolean",
+            "title": "Acceptedoutofbandconsent",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "gxgKitId"
+        ],
+        "title": "LinkKitRequest"
+      },
+      "ShippingAddressOverride": {
+        "properties": {
+          "addressLine1": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Addressline1"
+          },
+          "addressLine2": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addressline2"
+          },
+          "city": {
+            "type": "string",
+            "minLength": 1,
+            "title": "City"
+          },
+          "state": {
+            "type": "string",
+            "minLength": 1,
+            "title": "State"
+          },
+          "zipCode": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Zipcode"
+          },
+          "country": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Country"
+          }
+        },
+        "type": "object",
+        "required": [
+          "addressLine1",
+          "city",
+          "state",
+          "zipCode",
+          "country"
+        ],
+        "title": "ShippingAddressOverride",
+        "description": "Caller-supplied shipping address to use instead of the patient record.\n\nAll required fields are stripped of surrounding whitespace and must be\nnon-empty after stripping. Callers should validate the address via the\nlocation_service `/locations/validate` endpoint before submitting."
+      },
+      "SuccessResponse": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "default": true
+          }
+        },
+        "type": "object",
+        "title": "SuccessResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
