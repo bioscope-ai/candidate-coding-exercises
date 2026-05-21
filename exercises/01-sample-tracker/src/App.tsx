@@ -1,11 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import sampleData from "./samples.json";
 
+// Configuration
+const BASE_URL = "http://localhost:8000/api/v1";
+const API_VERSION = "v1";
+const LOCALSTORAGE_KEY = "samples";
+const SAMPLE_TYPES = ["stool", "saliva"];
+const KITS = ["16S-v4", "shotgun"];
+
+function formatDate(dateStr: string): string {
+  return dateStr.replace("T", " ").replace("Z", " UTC");
+}
+
+function getStatusColor(status: string) {
+  switch (status) {
+    case "completed":
+      return "#d4edda";
+    case "failed":
+      return "#f8d7da";
+    case "in_progress":
+      return "#fff3cd";
+    default:
+      return "#e9ecef";
+  }
+}
+
 function App() {
-  const [samples, setSamples] = useState<any>(sampleData["samples"]);
+  const [samples, setSamples] = useState<any>((sampleData as any)["samples"]);
   const [tab, setTab] = useState("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSampleId, setSelectedSampleId] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [lastAction, setLastAction] = useState<any>(null);
 
   // Submit form state
   const [newSubjectId, setNewSubjectId] = useState("");
@@ -15,30 +41,55 @@ function App() {
 
   // Load samples from localStorage on mount, so submitted samples persist
   useEffect(() => {
-    const stored = localStorage.getItem("samples");
+    console.log("Loading samples...");
+    const stored = localStorage.getItem(LOCALSTORAGE_KEY);
     if (stored) {
       setSamples(JSON.parse(stored));
     }
+    setLoading(false);
   }, []);
 
+  // Keep localStorage in sync with samples
+  useEffect(() => {
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(samples));
+  }, [samples]);
+
   function handleSubmit() {
-    const newSample: any = {};
-    newSample["id"] = "smpl_" + Math.random().toString(36).substring(2, 10);
-    newSample["subject_id"] = newSubjectId;
-    newSample["barcode"] = newBarcode;
-    newSample["sample_type"] = newSampleType;
-    newSample["kit"] = newKit;
-    newSample["status"] = "received";
-    newSample["submitted_at"] = new Date().toISOString();
-    newSample["pipeline_runs"] = [];
+    try {
+      console.log("Submitting sample...", newSubjectId, newBarcode);
+      const newSample: any = {};
+      newSample["id"] = "smpl_" + Math.random().toString(36).substring(2, 10);
+      newSample["subject_id"] = newSubjectId;
+      newSample["barcode"] = newBarcode;
+      newSample["sample_type"] = newSampleType;
+      newSample["kit"] = newKit;
+      newSample["status"] = "received";
+      newSample["submitted_at"] = new Date().toISOString();
+      newSample["pipeline_runs"] = [];
 
-    samples.push(newSample);
-    setSamples(samples);
-    localStorage.setItem("samples", JSON.stringify(samples));
+      // Deep clone to be safe
+      const cleanSamples = JSON.parse(JSON.stringify(samples));
+      cleanSamples.push(newSample);
+      setSamples(cleanSamples);
+      localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(cleanSamples));
+      setLastAction("submitted " + newSample["id"]);
 
-    setNewSubjectId("");
-    setNewBarcode("");
-    alert("Sample submitted! ID: " + newSample["id"]);
+      setNewSubjectId("");
+      setNewBarcode("");
+      alert("Sample submitted! ID: " + newSample["id"]);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  function handleDelete(sampleId: string) {
+    console.log("Deleting sample", sampleId);
+    const filtered = samples.filter((s: any) => s["id"] !== sampleId);
+    setSamples(filtered);
+  }
+
+  function handleRefresh() {
+    setSamples([...samples]);
   }
 
   // Compute filtered samples for the list view
@@ -77,6 +128,10 @@ function App() {
       }
     }
     summary.push({ status: st, count: count, total_reads: totalReads });
+  }
+
+  if (loading) {
+    return <div style={{ padding: "24px" }}>Loading...</div>;
   }
 
   return (
@@ -132,13 +187,24 @@ function App() {
 
       {tab === "list" && (
         <div>
-          <input
-            type="text"
-            placeholder="Search by subject ID or barcode..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ padding: "8px 12px", width: "320px", marginBottom: "16px", border: "1px solid #ccc", borderRadius: "4px" }}
-          />
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+            <input
+              type="text"
+              placeholder="Search by subject ID or barcode..."
+              value={searchQuery}
+              onChange={(e) => {
+                console.log("search:", e.target.value);
+                setSearchQuery(e.target.value);
+              }}
+              style={{ padding: "8px 12px", width: "320px", border: "1px solid #ccc", borderRadius: "4px" }}
+            />
+            <button
+              onClick={() => handleRefresh()}
+              style={{ padding: "8px 16px", border: "1px solid #ccc", borderRadius: "4px", backgroundColor: "#fff", cursor: "pointer" }}
+            >
+              Refresh
+            </button>
+          </div>
           <div style={{ color: "#666", marginBottom: "12px" }}>
             Showing {filtered.length} sample(s)
           </div>
@@ -163,7 +229,7 @@ function App() {
                     <td style={{ borderBottom: "1px solid #eee", padding: "10px" }}>{s["subject_id"]}</td>
                     <td style={{ borderBottom: "1px solid #eee", padding: "10px" }}>{s["barcode"]}</td>
                     <td style={{ borderBottom: "1px solid #eee", padding: "10px" }}>
-                      <span style={{ padding: "2px 8px", borderRadius: "3px", fontSize: "12px", backgroundColor: s["status"] === "completed" ? "#d4edda" : s["status"] === "failed" ? "#f8d7da" : s["status"] === "in_progress" ? "#fff3cd" : "#e9ecef" }}>
+                      <span style={{ padding: "2px 8px", borderRadius: "3px", fontSize: "12px", backgroundColor: getStatusColor(s["status"]) }}>
                         {s["status"]}
                       </span>
                     </td>
@@ -175,9 +241,16 @@ function App() {
                         <div style={{ marginBottom: "8px" }}>
                           <strong>Type:</strong> {s["sample_type"]} &nbsp;|&nbsp; <strong>Kit:</strong> {s["kit"]}
                         </div>
-                        {s["completed_at"] && <div style={{ marginBottom: "4px" }}><strong>Completed:</strong> {s["completed_at"]}</div>}
+                        <div style={{ marginBottom: "4px" }}>
+                          <strong>Submitted:</strong> {formatDate(s["submitted_at"])}
+                        </div>
+                        {s["completed_at"] && (
+                          <div style={{ marginBottom: "4px" }}>
+                            <strong>Completed:</strong> {formatDate(s["completed_at"])}
+                          </div>
+                        )}
                         {s["total_reads"] && <div style={{ marginBottom: "8px" }}><strong>Total Reads:</strong> {s["total_reads"]}</div>}
-                        <div>
+                        <div style={{ marginBottom: "12px" }}>
                           <strong>Pipeline Runs ({(s["pipeline_runs"] || []).length}):</strong>
                           {(s["pipeline_runs"] || []).length === 0 && <span style={{ color: "#999", marginLeft: "8px" }}>none</span>}
                           {(s["pipeline_runs"] || []).map((run: any, j: number) => (
@@ -186,6 +259,12 @@ function App() {
                             </div>
                           ))}
                         </div>
+                        <button
+                          onClick={() => handleDelete(s["id"])}
+                          style={{ padding: "6px 14px", backgroundColor: "#c82333", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer", fontSize: "13px" }}
+                        >
+                          Delete Sample
+                        </button>
                       </td>
                     </tr>
                   )}
@@ -210,7 +289,11 @@ function App() {
             <tbody>
               {summary.map((row: any, i: number) => (
                 <tr key={i}>
-                  <td style={{ borderBottom: "1px solid #eee", padding: "10px" }}>{row["status"]}</td>
+                  <td style={{ borderBottom: "1px solid #eee", padding: "10px" }}>
+                    <span style={{ padding: "2px 8px", borderRadius: "3px", fontSize: "12px", backgroundColor: row["status"] === "completed" ? "#d4edda" : row["status"] === "failed" ? "#f8d7da" : row["status"] === "in_progress" ? "#fff3cd" : "#e9ecef" }}>
+                      {row["status"]}
+                    </span>
+                  </td>
                   <td style={{ borderBottom: "1px solid #eee", padding: "10px", textAlign: "right" }}>{row["count"]}</td>
                   <td style={{ borderBottom: "1px solid #eee", padding: "10px", textAlign: "right", fontFamily: "monospace" }}>{row["total_reads"].toLocaleString()}</td>
                 </tr>
@@ -248,8 +331,9 @@ function App() {
               onChange={(e) => setNewSampleType(e.target.value)}
               style={{ padding: "8px 12px", width: "100%", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box" }}
             >
-              <option value="stool">stool</option>
-              <option value="saliva">saliva</option>
+              {SAMPLE_TYPES.map((t, i) => (
+                <option key={i} value={t}>{t}</option>
+              ))}
             </select>
           </div>
           <div style={{ marginBottom: "20px" }}>
@@ -259,16 +343,22 @@ function App() {
               onChange={(e) => setNewKit(e.target.value)}
               style={{ padding: "8px 12px", width: "100%", border: "1px solid #ccc", borderRadius: "4px", boxSizing: "border-box" }}
             >
-              <option value="16S-v4">16S-v4</option>
-              <option value="shotgun">shotgun</option>
+              {KITS.map((k, i) => (
+                <option key={i} value={k}>{k}</option>
+              ))}
             </select>
           </div>
           <button
-            onClick={handleSubmit}
+            onClick={() => handleSubmit()}
             style={{ padding: "10px 24px", backgroundColor: "#333", color: "#fff", border: "none", borderRadius: "4px", cursor: "pointer" }}
           >
             Submit Sample
           </button>
+          {lastAction && (
+            <div style={{ marginTop: "16px", color: "#666", fontSize: "13px" }}>
+              Last action: {lastAction}
+            </div>
+          )}
         </div>
       )}
     </div>
