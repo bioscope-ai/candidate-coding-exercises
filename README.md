@@ -16,3 +16,9 @@ We care less about a polished final result than about how you think:
 - What do you prioritize when you can't fix everything?
 - How do you communicate trade-offs?
 - How do you decide when something is "good enough"?
+
+## Exercises
+
+| # | Title | Language | Focus |
+|---|-------|----------|-------|
+| 01 | [Build an SDK, Then Use It](./exercises/01-sample-tracker/) | Python | AI tooling, SDK design, integration refactor |

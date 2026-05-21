@@ -1,0 +1,163 @@
+{
+  "samples": [
+    {
+      "id": "smpl_a1b2c3d4",
+      "subject_id": "SUBJ001",
+      "barcode": "BC0001",
+      "sample_type": "stool",
+      "kit": "16S-v4",
+      "status": "completed",
+      "submitted_at": "2026-04-12T10:23:00Z",
+      "completed_at": "2026-04-15T08:11:00Z",
+      "total_reads": 1234567,
+      "pipeline_runs": [
+        { "id": "run_001", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_002", "status": "succeeded", "pipeline_name": "16s-classify" }
+      ]
+    },
+    {
+      "id": "smpl_e5f6g7h8",
+      "subject_id": "SUBJ001",
+      "barcode": "BC0002",
+      "sample_type": "stool",
+      "kit": "shotgun",
+      "status": "in_progress",
+      "submitted_at": "2026-05-02T14:05:00Z",
+      "pipeline_runs": [
+        { "id": "run_003", "status": "running", "pipeline_name": "qc" }
+      ]
+    },
+    {
+      "id": "smpl_i9j0k1l2",
+      "subject_id": "SUBJ002",
+      "barcode": "BC0003",
+      "sample_type": "saliva",
+      "kit": "16S-v4",
+      "status": "completed",
+      "submitted_at": "2026-03-18T09:00:00Z",
+      "completed_at": "2026-03-22T11:45:00Z",
+      "total_reads": 987654,
+      "pipeline_runs": [
+        { "id": "run_004", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_005", "status": "succeeded", "pipeline_name": "16s-classify" }
+      ]
+    },
+    {
+      "id": "smpl_m3n4o5p6",
+      "subject_id": "SUBJ002",
+      "barcode": "BC0004",
+      "sample_type": "stool",
+      "kit": "shotgun",
+      "status": "failed",
+      "submitted_at": "2026-04-01T08:30:00Z",
+      "pipeline_runs": [
+        { "id": "run_006", "status": "failed", "pipeline_name": "qc" }
+      ]
+    },
+    {
+      "id": "smpl_q7r8s9t0",
+      "subject_id": "SUBJ003",
+      "barcode": "BC0005",
+      "sample_type": "stool",
+      "kit": "16S-v4",
+      "status": "received",
+      "submitted_at": "2026-05-19T16:22:00Z",
+      "pipeline_runs": []
+    },
+    {
+      "id": "smpl_u1v2w3x4",
+      "subject_id": "SUBJ003",
+      "barcode": "BC0006",
+      "sample_type": "stool",
+      "kit": "16S-v4",
+      "status": "completed",
+      "submitted_at": "2026-02-05T13:11:00Z",
+      "completed_at": "2026-02-09T07:33:00Z",
+      "total_reads": 2345678,
+      "pipeline_runs": [
+        { "id": "run_007", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_008", "status": "succeeded", "pipeline_name": "16s-classify" },
+        { "id": "run_009", "status": "succeeded", "pipeline_name": "diversity-metrics" }
+      ]
+    },
+    {
+      "id": "smpl_y5z6a7b8",
+      "subject_id": "SUBJ004",
+      "barcode": "BC0007",
+      "sample_type": "saliva",
+      "kit": "shotgun",
+      "status": "in_progress",
+      "submitted_at": "2026-05-11T10:45:00Z",
+      "pipeline_runs": [
+        { "id": "run_010", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_011", "status": "running", "pipeline_name": "shotgun-assembly" }
+      ]
+    },
+    {
+      "id": "smpl_c9d0e1f2",
+      "subject_id": "SUBJ004",
+      "barcode": "BC0008",
+      "sample_type": "stool",
+      "kit": "16S-v4",
+      "status": "completed",
+      "submitted_at": "2026-01-22T11:00:00Z",
+      "completed_at": "2026-01-26T15:20:00Z",
+      "total_reads": 1567890,
+      "pipeline_runs": [
+        { "id": "run_012", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_013", "status": "succeeded", "pipeline_name": "16s-classify" }
+      ]
+    },
+    {
+      "id": "smpl_g3h4i5j6",
+      "subject_id": "SUBJ005",
+      "barcode": "BC0009",
+      "sample_type": "stool",
+      "kit": "shotgun",
+      "status": "failed",
+      "submitted_at": "2026-03-30T08:15:00Z",
+      "pipeline_runs": [
+        { "id": "run_014", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_015", "status": "failed", "pipeline_name": "shotgun-assembly" }
+      ]
+    },
+    {
+      "id": "smpl_k7l8m9n0",
+      "subject_id": "SUBJ005",
+      "barcode": "BC0010",
+      "sample_type": "saliva",
+      "kit": "16S-v4",
+      "status": "completed",
+      "submitted_at": "2026-04-25T12:00:00Z",
+      "completed_at": "2026-04-29T09:10:00Z",
+      "total_reads": 876543,
+      "pipeline_runs": [
+        { "id": "run_016", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_017", "status": "succeeded", "pipeline_name": "16s-classify" }
+      ]
+    },
+    {
+      "id": "smpl_o1p2q3r4",
+      "subject_id": "SUBJ006",
+      "barcode": "BC0011",
+      "sample_type": "stool",
+      "kit": "16S-v4",
+      "status": "received",
+      "submitted_at": "2026-05-20T15:30:00Z",
+      "pipeline_runs": []
+    },
+    {
+      "id": "smpl_s5t6u7v8",
+      "subject_id": "SUBJ006",
+      "barcode": "BC0012",
+      "sample_type": "stool",
+      "kit": "shotgun",
+      "status": "in_progress",
+      "submitted_at": "2026-05-15T09:55:00Z",
+      "pipeline_runs": [
+        { "id": "run_018", "status": "succeeded", "pipeline_name": "qc" },
+        { "id": "run_019", "status": "running", "pipeline_name": "shotgun-assembly" }
+      ]
+    }
+  ]
+}
