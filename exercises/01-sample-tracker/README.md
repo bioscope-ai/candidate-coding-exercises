@@ -14,13 +14,9 @@ A good SDK has a deliberate, ergonomic surface. It groups related operations, hi
 
 ```bash
 npm install
-
-npm start -- list
-npm start -- search SUBJ001
-npm start -- summary
-npm start -- report SUBJ001
-npm start -- submit SUBJ001 BC0042 stool 16S-v4
-npm start -- get smpl_a1b2c3d4
+npm run dev
 ```
 
-The app reads from `samples.json` in this directory. No external services or credentials required — it runs cold.
+Then open the URL Vite prints (usually http://localhost:5173).
+
+The app reads from `src/samples.json` in this directory. No external services or credentials required — it runs cold. Submitted samples persist in `localStorage`; clear it via DevTools to reset.
