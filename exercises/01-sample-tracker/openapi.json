@@ -543,7 +543,7 @@
           "mbx-orders"
         ],
         "summary": "List MBx orders for a patient",
-        "description": "List MBX orders for a patient, including their associated samples.",
+        "description": "List MBX orders for a patient, including their associated kits.",
         "operationId": "list_mbx_orders_for_patient",
         "parameters": [
           {
@@ -601,7 +601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxOrderWithSamples_"
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxOrderWithKits_"
                 }
               }
             }
@@ -833,25 +833,9 @@
           "mbx-orders"
         ],
         "summary": "List MBx samples for an account",
-        "description": "List samples for the account.\n\nIf barcode query parameter is provided, returns the sample matching that\nbarcode (for validation purposes). Otherwise returns all samples\nfor the account.",
+        "description": "List samples for the account.",
         "operationId": "list_mbx_samples",
         "parameters": [
-          {
-            "name": "barcode",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Barcode"
-            }
-          },
           {
             "name": "limit",
             "in": "query",
@@ -980,78 +964,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxSample_"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "mbx-orders"
-        ],
-        "summary": "Assign an MBx sample to a patient",
-        "description": "Assign a sample to a patient.\n\nThe sample is identified by its barcode (visible on the physical kit).\nThis triggers the cmbio Person and Sample Metadata flow:\ncreates the cmbio Person if needed, sets metadata on the sample,\nand updates the internal database record.",
-        "operationId": "assign_mbx_sample",
-        "parameters": [
-          {
-            "name": "patient_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Patient Id"
-            }
-          },
-          {
-            "name": "Bioscope-User-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Bioscope-User-Id"
-            }
-          },
-          {
-            "name": "Bioscope-Account-Id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "title": "Bioscope-Account-Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AssignSampleRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SuccessResponse"
                 }
               }
             }
@@ -1270,28 +1182,388 @@
           }
         }
       }
+    },
+    "/test-orders/mbx/kits": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List MBx kits for an account",
+        "description": "List kits for the account.\n\nIf barcode query parameter is provided, returns the kit matching that\nbarcode (for validation purposes). Otherwise returns all kits\nfor the account.",
+        "operationId": "list_mbx_kits",
+        "parameters": [
+          {
+            "name": "barcode",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Barcode"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxKit_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/kits/{cmbio_mbx_kit_id}": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "Get an MBx kit by ID",
+        "description": "Get a specific kit by its internal ID.",
+        "operationId": "get_mbx_kit",
+        "parameters": [
+          {
+            "name": "cmbio_mbx_kit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cmbio Mbx Kit Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CmbioMbxKit"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/orders/{cmbio_mbx_order_id}/kits": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List kits for an MBx order",
+        "description": "List kits for a specific order.",
+        "operationId": "list_mbx_kits_for_order",
+        "parameters": [
+          {
+            "name": "cmbio_mbx_order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Cmbio Mbx Order Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxKit_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/test-orders/mbx/patients/{patient_id}/kits": {
+      "get": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "List MBx kits for a patient",
+        "description": "List MBX kits for a patient.",
+        "operationId": "list_mbx_kits_for_patient",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 100,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "next_page_token",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Next Page Token"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpPaginatedResponse_CmbioMbxKit_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "mbx-orders"
+        ],
+        "summary": "Link an MBx kit to a patient",
+        "description": "Link an existing kit to a patient.\n\nThe kit is identified by its barcode (visible on the physical kit). The kit\nmust belong to the account and not already be assigned to a patient. Use this\nendpoint when a clinic has bulk-ordered kits and needs to assign one to a\npatient.\n\nThis triggers the cmbio Person and Sample Metadata flow:\ncreates the cmbio Person if needed, sets metadata on the kit,\nand updates the internal database record.",
+        "operationId": "link_mbx_kit",
+        "parameters": [
+          {
+            "name": "patient_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Patient Id"
+            }
+          },
+          {
+            "name": "Bioscope-User-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-User-Id"
+            }
+          },
+          {
+            "name": "Bioscope-Account-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Bioscope-Account-Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkMbxKitRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "AssignSampleRequest": {
-        "properties": {
-          "barcode": {
-            "type": "string",
-            "title": "Barcode"
-          },
-          "acceptedOutOfBandConsent": {
-            "type": "boolean",
-            "title": "Acceptedoutofbandconsent",
-            "default": true
-          }
-        },
-        "type": "object",
-        "required": [
-          "barcode"
-        ],
-        "title": "AssignSampleRequest"
-      },
       "BulkMbxOrderRequest": {
         "properties": {
           "quantity": {
@@ -1469,29 +1741,6 @@
         ],
         "title": "CmbioMbxOrderStatus"
       },
-      "CmbioMbxOrderWithSamples": {
-        "properties": {
-          "order": {
-            "$ref": "#/components/schemas/CmbioMbxOrder",
-            "description": "The order"
-          },
-          "samples": {
-            "items": {
-              "$ref": "#/components/schemas/CmbioMbxSample"
-            },
-            "type": "array",
-            "title": "Samples",
-            "description": "The samples associated with this order"
-          }
-        },
-        "type": "object",
-        "required": [
-          "order",
-          "samples"
-        ],
-        "title": "CmbioMbxOrderWithSamples",
-        "description": "An order with its associated samples."
-      },
       "CmbioMbxSample": {
         "properties": {
           "createdAt": {
@@ -1513,12 +1762,20 @@
           "cmbioMbxSampleId": {
             "type": "string",
             "format": "uuid",
-            "title": "Cmbiombxsampleid"
+            "title": "Cmbiombxsampleid",
+            "description": "The ID of the cmbio MBX sample (generated by us)"
+          },
+          "cmbioMbxKitId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Cmbiombxkitid",
+            "description": "The ID of the kit this specimen was collected into"
           },
           "cmbioMbxOrderId": {
             "type": "string",
             "format": "uuid",
-            "title": "Cmbiombxorderid"
+            "title": "Cmbiombxorderid",
+            "description": "The ID of the order this sample belongs to"
           },
           "accountId": {
             "type": "string",
@@ -1537,14 +1794,11 @@
             ],
             "title": "Patientid"
           },
-          "barcode": {
-            "type": "string",
-            "title": "Barcode"
-          },
           "labStatus": {
-            "$ref": "#/components/schemas/CmbioMbxSampleLabStatus"
+            "$ref": "#/components/schemas/CmbioMbxSampleLabStatus",
+            "description": "The lab processing status of the collected specimen"
           },
-          "outboundCarrier": {
+          "collectionDate": {
             "anyOf": [
               {
                 "type": "string"
@@ -1553,40 +1807,8 @@
                 "type": "null"
               }
             ],
-            "title": "Outboundcarrier"
-          },
-          "outboundTrackingNumber": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Outboundtrackingnumber"
-          },
-          "inboundCarrier": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Inboundcarrier"
-          },
-          "inboundTrackingNumber": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Inboundtrackingnumber"
+            "title": "Collectiondate",
+            "description": "The date the specimen was collected from the patient"
           },
           "errorMessage": {
             "anyOf": [
@@ -1598,17 +1820,6 @@
               }
             ],
             "title": "Errormessage"
-          },
-          "collectionDate": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Collectiondate"
           },
           "isTestEntity": {
             "type": "boolean",
@@ -1630,12 +1841,13 @@
         "type": "object",
         "required": [
           "cmbioMbxSampleId",
+          "cmbioMbxKitId",
           "cmbioMbxOrderId",
           "accountId",
-          "barcode",
           "labStatus"
         ],
-        "title": "CmbioMbxSample"
+        "title": "CmbioMbxSample",
+        "description": "A specimen collected from a patient into a kit and returned to the lab. Shipping/logistics for the physical kit live on CmbioMbxKit."
       },
       "CmbioMbxSampleLabStatus": {
         "type": "string",
@@ -2020,26 +2232,6 @@
         "type": "object",
         "title": "HTTPValidationError"
       },
-      "HttpPaginatedResponse_CmbioMbxOrderWithSamples_": {
-        "properties": {
-          "items": {
-            "items": {
-              "$ref": "#/components/schemas/CmbioMbxOrderWithSamples"
-            },
-            "type": "array",
-            "title": "Items"
-          },
-          "pagination": {
-            "$ref": "#/components/schemas/HttpPaginationMetadata"
-          }
-        },
-        "type": "object",
-        "required": [
-          "items",
-          "pagination"
-        ],
-        "title": "HttpPaginatedResponse[CmbioMbxOrderWithSamples]"
-      },
       "HttpPaginatedResponse_CmbioMbxOrder_": {
         "properties": {
           "items": {
@@ -2275,6 +2467,222 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "CmbioMbxKitStatus": {
+        "type": "string",
+        "enum": [
+          "created",
+          "shipped",
+          "received",
+          "cancelled"
+        ],
+        "title": "CmbioMbxKitStatus",
+        "description": "The shipping/logistics lifecycle of the physical kit sent to the patient. Lab processing state of the returned specimen is tracked separately on CmbioMbxSample.labStatus."
+      },
+      "CmbioMbxKit": {
+        "properties": {
+          "createdAt": {
+            "type": "integer",
+            "title": "Createdat",
+            "default": 0
+          },
+          "updatedAt": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updatedat"
+          },
+          "cmbioMbxKitId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Cmbiombxkitid",
+            "description": "The ID of the cmbio MBX kit (generated by us)"
+          },
+          "cmbioMbxOrderId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Cmbiombxorderid",
+            "description": "The ID of the order this kit belongs to"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Accountid",
+            "description": "The ID of the account that the kit belongs to"
+          },
+          "patientId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Patientid",
+            "description": "The ID of the patient the kit is assigned to. May be None until the kit is linked to a patient"
+          },
+          "barcode": {
+            "type": "string",
+            "title": "Barcode",
+            "description": "The barcode printed on the physical kit. Used to link the kit to a patient"
+          },
+          "status": {
+            "$ref": "#/components/schemas/CmbioMbxKitStatus",
+            "description": "The shipping status of the kit"
+          },
+          "outboundCarrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outboundcarrier",
+            "description": "The carrier for the outbound shipment to the patient"
+          },
+          "outboundTrackingNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outboundtrackingnumber",
+            "description": "The tracking number for the outbound shipment to the patient"
+          },
+          "inboundCarrier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inboundcarrier",
+            "description": "The carrier for the inbound (return) shipment to the lab"
+          },
+          "inboundTrackingNumber": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inboundtrackingnumber",
+            "description": "The tracking number for the inbound (return) shipment to the lab"
+          },
+          "isTestEntity": {
+            "type": "boolean",
+            "title": "Istestentity",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "cmbioMbxKitId",
+          "cmbioMbxOrderId",
+          "accountId",
+          "barcode",
+          "status"
+        ],
+        "title": "CmbioMbxKit",
+        "description": "A physical kit shipped to a patient. The specimen collected into the kit and returned to the lab is represented by CmbioMbxSample."
+      },
+      "HttpPaginatedResponse_CmbioMbxKit_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxKit"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[CmbioMbxKit]"
+      },
+      "LinkMbxKitRequest": {
+        "properties": {
+          "barcode": {
+            "type": "string",
+            "title": "Barcode",
+            "description": "The barcode printed on the physical kit"
+          },
+          "acceptedOutOfBandConsent": {
+            "type": "boolean",
+            "title": "Acceptedoutofbandconsent",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "barcode"
+        ],
+        "title": "LinkMbxKitRequest"
+      },
+      "CmbioMbxOrderWithKits": {
+        "properties": {
+          "order": {
+            "$ref": "#/components/schemas/CmbioMbxOrder",
+            "description": "The order"
+          },
+          "kits": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxKit"
+            },
+            "type": "array",
+            "title": "Kits",
+            "description": "The kits associated with this order"
+          }
+        },
+        "type": "object",
+        "required": [
+          "order",
+          "kits"
+        ],
+        "title": "CmbioMbxOrderWithKits",
+        "description": "An order with its associated kits."
+      },
+      "HttpPaginatedResponse_CmbioMbxOrderWithKits_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/CmbioMbxOrderWithKits"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/HttpPaginationMetadata"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "pagination"
+        ],
+        "title": "HttpPaginatedResponse[CmbioMbxOrderWithKits]"
       }
     }
   }
