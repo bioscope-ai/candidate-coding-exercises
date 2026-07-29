@@ -4,6 +4,7 @@
 
 We'd like you to design and build a small library whose job is to sanitize JSON.
 
+
 By way of example, imagine a data record containing a name, an email address, and some nested billing details as well as a caller that wants the email removed and the account number obscured, while everything else is left untouched. Producing that transformed record, driven by the caller's specification, is the kind of thing this library is for.
 
 The exercise is deliberately open-ended. Part of what we're interested in is how you interpret an under-specified problem: the decisions you make, the trade-offs you weigh, and the questions you ask along the way. Treat the requirements below as the shape of the problem, not a complete specification — where something is unstated, that's an invitation to think it through and make a defensible choice.
@@ -30,6 +31,32 @@ The form the specification takes is up to you.
 - **Tests** that demonstrate the behavior and give you confidence it's correct.
 
 Use your judgment about what else belongs alongside production-quality code.
+
+## Example
+
+Consider a JSON blob with the following fields:
+
+```json
+{
+  emailAddress: string,
+  accountNumber: string,
+  billingDetails: {
+    [
+      invoiceNumber: string,
+      invoiceDate: string,
+      hasPaid: boolean
+    ]
+  }
+}
+```
+
+and a caller that wants:
+
+- The email address removed
+- The account number obscured
+- Everything else left untouched
+
+This library would then be able to take those two inputs and return the desired output.
 
 ## Ground rules
 
