@@ -2,11 +2,11 @@
 
 ## Overview
 
-We'd like you to design and build a small library whose job is to **sanitize JSON**.
+We'd like you to design and build a small library whose job is to sanitize JSON.
+
+By way of example, imagine a data record containing a name, an email address, and some nested billing details as well as a caller that wants the email removed and the account number obscured, while everything else is left untouched. Producing that transformed record, driven by the caller's specification, is the kind of thing this library is for.
 
 The exercise is deliberately open-ended. Part of what we're interested in is how you interpret an under-specified problem: the decisions you make, the trade-offs you weigh, and the questions you ask along the way. Treat the requirements below as the shape of the problem, not a complete specification — where something is unstated, that's an invitation to think it through and make a defensible choice.
-
-To make the goal concrete: imagine a customer record — a name, an email address, and some nested billing details — where the caller wants the email removed and the account number obscured, while everything else is left untouched. Producing that transformed record, driven by the caller's specification, is the kind of thing this library is for.
 
 This is meant to be collaborative. Please think out loud, explain your reasoning as you work, and ask questions whenever the requirements feel ambiguous. If you get stuck, say so — that's a normal part of the process.
 
