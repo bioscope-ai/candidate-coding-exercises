@@ -40,13 +40,13 @@ Consider a JSON blob with the following fields:
 {
   emailAddress: string,
   accountNumber: string,
-  billingDetails: {
-    [
+  billingDetails: [
+    {
       invoiceNumber: string,
       invoiceDate: string,
       hasPaid: boolean
-    ]
-  }
+    }
+  ]
 }
 ```
 
