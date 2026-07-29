@@ -22,3 +22,4 @@ We care less about a polished final result than about how you think:
 | # | Title | Language | Focus |
 |---|-------|----------|-------|
 | 01 | [Build an SDK, Then Use It](./exercises/01-sample-tracker/) | Python | AI tooling, SDK design, integration refactor |
+| 02 | [Build a JSON sanitization Library](./exercises/02-json-sanitizer/) | Any | Navigating ambiguity, recursive data handling, craftsmanship |
